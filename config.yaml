@@ -1,0 +1,49 @@
+models:
+  detector:
+    enabled: true
+    kind: onnx
+    path: models/detector.onnx
+    input_size: 640
+    conf: 0.25
+    iou: 0.5
+    max_det: 300
+  segmenter:
+    enabled: false
+    kind: onnx
+    path: models/segmenter.onnx
+    input_size: 640
+    num_classes: 2
+    threshold: 0.5
+
+classes:
+  names:
+    0: ampule
+    1: crack
+    2: particle
+    3: contamination
+    4: bubble
+    5: fill_level_low
+
+rules:
+  fail_if_detected:
+    - crack
+  foreign_material_classes:
+    - particle
+    - contamination
+  bubble_class: bubble
+  bubble_max_diameter_px: 35
+  fill_level_low_class: fill_level_low
+  min_fill_ratio: 0.70
+
+postprocess:
+  min_component_area: 30
+  max_components: 200
+  overlay_alpha: 0.45
+
+runtime:
+  device: cuda
+  half: false
+
+server:
+  host: 0.0.0.0
+  port: 8000
